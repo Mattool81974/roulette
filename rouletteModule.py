@@ -2,6 +2,7 @@ from random import *
 
 #Variable global
 argent = 15000
+nombreCase = 37
 
 #Demander l'argent total à l'utilisateur
 def demanderArgent():
