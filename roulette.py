@@ -10,6 +10,21 @@ pygame.init() #Lancer pygame
 #Transformer un string en tableau de char
 def strEnArray(s):
     return [c for c in s]
+#Une fonction mathématique qui a comme représentation graphique un demi cercle parfait
+def f(x):
+    multipliant = 1 #Variable permettant d'opposer la valeur finale
+    while True: #Transformer la variable pour correspondre à l'intervalle de définition de la fonction
+        if x < -1:
+            x *= -1
+            multipliant *= -1
+            x -= 2
+        elif x > 1:
+            x *= -1
+            multipliant *= -1
+            x += 2
+        else:
+            break
+    return sqrt(1-x**2) #Retourner l'image de la fonction
 
 #Variable constante de type tuple contenant la taille de l'écran
 TAILLE=(700, 600)
@@ -46,10 +61,14 @@ elementsGUI = {
 focusInterfaceDEntreeArgent = False
 focusInterfaceDEntreeCase = False
 focusInterfaceDEntreeMise = False
+#Largeur des traits de la roulette
+largeurTraitsRoulette=1
 #Statue de rotation pour l'animation du bouton chargement
 parametreRotation = 0
 #Vitesse de rotation pour l'animation du bouton chargement
 PARAMETRE_ROTATION_VITESSE = 0.5
+#Police des chiffres sur la roulette
+policeChiffreRoulette=8
 #Définir le rect des interfaces d'entrées
 rectInterfaceDEntreeArgent = (150, 420, 400, 100)
 rectInterfaceDEntreeCase = (80, 530, 150, 70)
@@ -98,14 +117,14 @@ while True:
             focusInterfaceDEntreeCase = False #Remettre le focus sur l'interface d'entrée case à faux pour tout click
             focusInterfaceDEntreeMise = False #Remettre le focus sur l'interface d'entrée mise à faux pour tout click
             if page == 0:
-                if souris[0] >= 200 and souris[0] <= 400 and souris[1] >= 400 and souris[1] <= 642: #Bouton jouer clické
+                if souris[0] >= 200 and souris[0] <= 500 and souris[1] >= 400 and souris[1] <= 642: #Bouton jouer clické
                     page = 1
                 elif souris[0] >= 10 and souris[0] <= 76 and souris[1] >= 10 and souris[1] <= 76:
                     page =-1
             elif page == 1:
                 if souris[0] >= rectInterfaceDEntreeArgent[0] and souris[0] <= rectInterfaceDEntreeArgent[0] + rectInterfaceDEntreeArgent[2] and souris[1] >= rectInterfaceDEntreeArgent[1] and souris[1] <= rectInterfaceDEntreeArgent[1] + rectInterfaceDEntreeArgent[3]:
                     focusInterfaceDEntreeArgent = True #Remettre le focus sur l'interface d'entrée argent à vrai si clicker sur l'interface
-                elif texteInterfaceDEntreeArgent != "" and souris[0] >= 550/2 and souris[1] >= yBoutonValiderPage1 and souris[0] <= 550/2 + 150 and souris[1] <= yBoutonValiderPage1 + 71: #Valider la quantité d'argent totale
+                elif texteInterfaceDEntreeArgent != "" and float(texteInterfaceDEntreeArgent) > 0 and souris[0] >= 550/2 and souris[1] >= yBoutonValiderPage1 and souris[0] <= 550/2 + 150 and souris[1] <= yBoutonValiderPage1 + 71: #Valider la quantité d'argent totale
                     argent = float(texteInterfaceDEntreeArgent)
                     page = 2
             elif page == 2:
@@ -113,12 +132,12 @@ while True:
                     focusInterfaceDEntreeMise = True #Remettre le focus sur l'interface d'entrée argent à vrai si clicker sur l'interface
                 elif souris[0] >= rectInterfaceDEntreeCase[0] and souris[0] <= rectInterfaceDEntreeCase[0] + rectInterfaceDEntreeCase[2] and souris[1] >= rectInterfaceDEntreeCase[1] and souris[1] <= rectInterfaceDEntreeCase[1] + rectInterfaceDEntreeCase[3]:
                     focusInterfaceDEntreeCase = True #Remettre le focus sur l'interface d'entrée argent à vrai si clicker sur l'interface
-                if souris[0] >= 500/2 and souris[1] >= yBoutonLancerPage2 and souris[0] <= 500/2 + 200 and souris[1] <= yBoutonLancerPage2 + 94:
+                if texteInterfaceDEntreeCase != "" and texteInterfaceDEntreeMise != "" and float(texteInterfaceDEntreeMise) > 0 and souris[0] >= 500/2 and souris[1] >= yBoutonLancerPage2 and souris[0] <= 500/2 + 200 and souris[1] <= yBoutonLancerPage2 + 94: #Lancer la roue
                     page = 2.3
         elif ev.type == KEYDOWN: #Si une touche du clavier est préssé
             if page == 1:
                 if focusInterfaceDEntreeArgent: #Si le focus est sur l'entrée d'argent (tout les nombres)
-                    if ev.key == K_KP_ENTER or ev.key == 13 and texteInterfaceDEntreeArgent != "": #Valider la quantité d'argent totale
+                    if ev.key == K_KP_ENTER or ev.key == 13 and texteInterfaceDEntreeArgent != "" and float(texteInterfaceDEntreeArgent) > 0: #Valider la quantité d'argent totale
                         argent = float(texteInterfaceDEntreeArgent)
                         page = 2
                     elif ev.key == K_BACKSPACE and len(texteInterfaceDEntreeArgent) > 0: #Supprimer un caractère
@@ -175,8 +194,10 @@ while True:
                             texteInterfaceDEntreeMise += "8"
                         elif ev.key == K_9 or ev.key == K_KP_9 or ev.key == K_KP9:
                             texteInterfaceDEntreeMise += "9" 
+                        elif (ev.key == K_PERIOD or ev.key == K_KP_PERIOD or ev.key == K_COMMA) and texteInterfaceDEntreeMise.count(".") <= 0:
+                            texteInterfaceDEntreeMise += "." 
                     if texteInterfaceDEntreeMise != "" and float(texteInterfaceDEntreeMise) > float(texteInterfaceDEntreeArgent):
-                        texteInterfaceDEntreeMise = texteInterfaceDEntreeArgent
+                        texteInterfaceDEntreeMise = str(float(texteInterfaceDEntreeArgent))
                 elif focusInterfaceDEntreeCase: #Si le focus est sur l'entrée mise (tout les nombres)
                     if ev.key == K_KP_ENTER or ev.key == 13 and texteInterfaceDEntreeCase != "": #Valider la quantité d'argent totale
                         focusInterfaceDEntreeCase = False
@@ -207,6 +228,8 @@ while True:
                             texteInterfaceDEntreeCase += "9"
                     if texteInterfaceDEntreeCase != "" and float(texteInterfaceDEntreeCase) >= nombreCase:
                         texteInterfaceDEntreeCase = str(nombreCase - 1)
+                    if texteInterfaceDEntreeCase != "" and float(texteInterfaceDEntreeCase) <= 0:
+                        texteInterfaceDEntreeCase = str(1)
 
 
     fenetre.blit(arrierePlan, (0, 0, TAILLE[0], TAILLE[1])) #Afficher l'image d'arrière plan (visible sur toutes las pages)
@@ -296,14 +319,24 @@ while True:
             traitEcritureVisibleInterfaceDEntreeCase = True #Remettre la visibilité du trait de l'interface à vrai pour prochain focus (uniquement esthétique)
 
         largeurRoulette = 125 #Définir la largeur de la roulette
-        img=Surface((largeurRoulette * 2, largeurRoulette * 2)).convert_alpha() #Créer une surface roulette
+        img=Surface((largeurRoulette * 2, largeurRoulette * 2)).convert_alpha() #Créer une surface roulette compatible alpha
         img.fill((0, 0, 0, 0)) #Rendre le fond de la surface de la roulette transparent
         draw.circle(img, (0, 0, 0), (largeurRoulette, largeurRoulette), largeurRoulette) #Dessiner l'arrière de la roulette
         draw.circle(img, (50, 50, 50), (largeurRoulette, largeurRoulette), largeurRoulette - 25) #Dessine devant l'arrière de la roulette
         draw.circle(img, (139, 0, 0), (largeurRoulette, largeurRoulette), largeurRoulette - 30) #Dessiner le plateau de la roulette
-        for i in range(nombreCase): #Dessiner chaque ligne
-            draw.line(img, (50, 50, 50), (largeurRoulette, largeurRoulette), (largeurRoulette + largeurRoulette*cos(((i * 18)/180)), largeurRoulette*sin(((i * 18)/180))))
-        
+        police = font.SysFont("arial", policeChiffreRoulette) #Mettre la police à la police de la roulette
+        for i in range(nombreCase): #Dessiner chaque ligne et nombres
+            positionFin=(largeurRoulette + (largeurRoulette-30)*(sin((i * (pi/nombreCase))*2)), largeurRoulette + (largeurRoulette-30)*(cos((i * (pi/nombreCase))*2))) #Calcul de la position du point (sur un cercle)
+            draw.line(img, (50, 50, 50), (largeurRoulette, largeurRoulette), positionFin, largeurTraitsRoulette) #Dessiner la ligne
+            lettre = police.render(str(i+1) + " "*(len(str(nombreCase+1))-len(str(i))), True, (0, 0, 0)) #Dessiner la lettre
+            lettre = transform.rotate(lettre, (i*360/(nombreCase-1))) #Tourner la lettre
+            positionFin=(largeurRoulette + (largeurRoulette-(30+policeChiffreRoulette/2+1))*(sin((i * (pi/nombreCase))*2+(pi/nombreCase))), largeurRoulette + (largeurRoulette-(30+policeChiffreRoulette/2+1))*(cos((i * (pi/nombreCase))*2+(pi/nombreCase)))) #Calcul de la position du texte (sur un cercle)
+            positionFinTrait=(lettre.get_width()*f(i*2/nombreCase), lettre.get_height()*f((-i)*2/nombreCase)) #Calcul de la position du texte par rapport au point (sur un cercle)
+            img.blit(lettre, (positionFin[0] - (positionFinTrait[0] - (lettre.get_width()/2)*f(i*2/nombreCase)), positionFin[1] - (positionFinTrait[1] - lettre.get_height()/2*f(i*2/nombreCase)), lettre.get_width(), lettre.get_height())) #Afficher le texte
+        draw.circle(img, (0, 0, 0), (largeurRoulette, largeurRoulette), largeurRoulette - 100) #Dessiner la partie centrale de la roulette
+        draw.circle(img, (218,165,32), (largeurRoulette, largeurRoulette), largeurRoulette - 102) #Dessine la partie centrale de la roulette
+        draw.polygon(img, (30, 30, 30), ((largeurRoulette-20, largeurRoulette*2+10), (largeurRoulette+20, largeurRoulette*2+10), (largeurRoulette, largeurRoulette*2-40)))
+
         if page - 2.0 < 0.2:
             yBoutonLancerPage2=500
             if souris[0] >= 500/2 and souris[1] >= yBoutonLancerPage2 and souris[0] <= 500/2 + 200 and souris[1] <= yBoutonLancerPage2 + 94:
