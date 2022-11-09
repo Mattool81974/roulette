@@ -18,7 +18,8 @@ TAILLE=(700, 600)
 #-1.0 -> page de paramètre
 #0.0 -> page d'accueil
 #1.0 -> page où rentrer ses sous
-#2.0 -> page où le jouer choisis son numéro et ou la roulette est tiré
+#2.0 -> page où le jouer choisis son numéro et ou la roulette n'est pas encore lancé
+#2.3 -> page où le jouer choisis son numéro et ou la roulette est lancé
 page=0
 
 #Création de la fenêtre dans une instance "screen"
@@ -37,7 +38,9 @@ elementsGUI = {
     "boutonParametre": image.load("assets/boutons/boutonParametre.png"),
     "titrePage0": image.load("assets/titrePage0.png"),
     "boutonValider1": image.load("assets/boutons/boutonValider1.png"),
-    "boutonValider2": image.load("assets/boutons/boutonValider2.png")
+    "boutonValider2": image.load("assets/boutons/boutonValider2.png"),
+    "boutonLancer1": image.load("assets/boutons/boutonLancer1.png"),
+    "boutonLancer2": image.load("assets/boutons/boutonLancer2.png")
 }
 #Savoir si il y a un focus sur les interfaces d'entrées
 focusInterfaceDEntreeArgent = False
@@ -110,6 +113,8 @@ while True:
                     focusInterfaceDEntreeMise = True #Remettre le focus sur l'interface d'entrée argent à vrai si clicker sur l'interface
                 elif souris[0] >= rectInterfaceDEntreeCase[0] and souris[0] <= rectInterfaceDEntreeCase[0] + rectInterfaceDEntreeCase[2] and souris[1] >= rectInterfaceDEntreeCase[1] and souris[1] <= rectInterfaceDEntreeCase[1] + rectInterfaceDEntreeCase[3]:
                     focusInterfaceDEntreeCase = True #Remettre le focus sur l'interface d'entrée argent à vrai si clicker sur l'interface
+                if souris[0] >= 500/2 and souris[1] >= yBoutonLancerPage2 and souris[0] <= 500/2 + 200 and souris[1] <= yBoutonLancerPage2 + 94:
+                    page = 2.3
         elif ev.type == KEYDOWN: #Si une touche du clavier est préssé
             if page == 1:
                 if focusInterfaceDEntreeArgent: #Si le focus est sur l'entrée d'argent (tout les nombres)
@@ -247,7 +252,7 @@ while True:
         else:
             tempsTraitEcritureVisibleInterfaceDEntreeArgent = 0 #Remettre le temps d'écriture du trait de l'interface à 0 pour prochain focus (uniquement esthétique)
             traitEcritureVisibleInterfaceDEntreeArgent = True #Remettre la visibilité du trait de l'interface à vrai pour prochain focus (uniquement esthétique)
-    elif page == 2:
+    elif floor(page) == 2:
         police = font.SysFont("arial", 30) #Mettre la police à 30
         titreArgent = police.render("Vous avez " + str(argent) + " euros.", True, (0, 0, 0)) #Créer une image avec le texte indiquant la quantité d'argent dedans
         fenetre.blit(titreArgent, (700/2.0-titreArgent.get_width()/2.0, 300, titreArgent.get_width(), titreArgent.get_height())) #Afficher l'image dans la fenêtre
@@ -289,6 +294,24 @@ while True:
         else:
             tempsTraitEcritureVisibleInterfaceDEntreeCase = 0 #Remettre le temps d'écriture du trait de l'interface à 0 pour prochain focus (uniquement esthétique)
             traitEcritureVisibleInterfaceDEntreeCase = True #Remettre la visibilité du trait de l'interface à vrai pour prochain focus (uniquement esthétique)
+
+        largeurRoulette = 125 #Définir la largeur de la roulette
+        img=Surface((largeurRoulette * 2, largeurRoulette * 2)).convert_alpha() #Créer une surface roulette
+        img.fill((0, 0, 0, 0)) #Rendre le fond de la surface de la roulette transparent
+        draw.circle(img, (0, 0, 0), (largeurRoulette, largeurRoulette), largeurRoulette) #Dessiner l'arrière de la roulette
+        draw.circle(img, (50, 50, 50), (largeurRoulette, largeurRoulette), largeurRoulette - 25) #Dessine devant l'arrière de la roulette
+        draw.circle(img, (139, 0, 0), (largeurRoulette, largeurRoulette), largeurRoulette - 30) #Dessiner le plateau de la roulette
+        for i in range(nombreCase): #Dessiner chaque ligne
+            draw.line(img, (50, 50, 50), (largeurRoulette, largeurRoulette), (largeurRoulette + largeurRoulette*cos(((i * 18)/180)), largeurRoulette*sin(((i * 18)/180))))
+        
+        if page - 2.0 < 0.2:
+            yBoutonLancerPage2=500
+            if souris[0] >= 500/2 and souris[1] >= yBoutonLancerPage2 and souris[0] <= 500/2 + 200 and souris[1] <= yBoutonLancerPage2 + 94:
+                fenetre.blit(elementsGUI["boutonLancer2"], (500/2, yBoutonLancerPage2, 200, 94))
+                curseur = SYSTEM_CURSOR_HAND #Changer le curseur
+            else:
+                fenetre.blit(elementsGUI["boutonLancer1"], (500/2, yBoutonLancerPage2, 200, 94))
+        fenetre.blit(img, (690 - img.get_width(), 590 - img.get_height(), img.get_width(), img.get_height()))
 
     #Actualiser le curseur
     mouse.set_cursor(curseur)
