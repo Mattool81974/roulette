@@ -326,13 +326,20 @@ while True:
         draw.circle(img, (139, 0, 0), (largeurRoulette, largeurRoulette), largeurRoulette - 30) #Dessiner le plateau de la roulette
         police = font.SysFont("arial", policeChiffreRoulette) #Mettre la police à la police de la roulette
         for i in range(nombreCase): #Dessiner chaque ligne et nombres
-            positionFin=(largeurRoulette + (largeurRoulette-30)*(sin((i * (pi/nombreCase))*2)), largeurRoulette + (largeurRoulette-30)*(cos((i * (pi/nombreCase))*2))) #Calcul de la position du point (sur un cercle)
-            draw.line(img, (50, 50, 50), (largeurRoulette, largeurRoulette), positionFin, largeurTraitsRoulette) #Dessiner la ligne
-            lettre = police.render(str(i+1) + " "*(len(str(nombreCase+1))-len(str(i))), True, (0, 0, 0)) #Dessiner la lettre
-            lettre = transform.rotate(lettre, (i*360/(nombreCase-1))) #Tourner la lettre
-            positionFin=(largeurRoulette + (largeurRoulette-(30+policeChiffreRoulette/2+1))*(sin((i * (pi/nombreCase))*2+(pi/nombreCase))), largeurRoulette + (largeurRoulette-(30+policeChiffreRoulette/2+1))*(cos((i * (pi/nombreCase))*2+(pi/nombreCase)))) #Calcul de la position du texte (sur un cercle)
-            positionFinTrait=(lettre.get_width()*f(i*2/nombreCase), lettre.get_height()*f((-i)*2/nombreCase)) #Calcul de la position du texte par rapport au point (sur un cercle)
-            img.blit(lettre, (positionFin[0] - (positionFinTrait[0] - (lettre.get_width()/2)*f(i*2/nombreCase)), positionFin[1] - (positionFinTrait[1] - lettre.get_height()/2*f(i*2/nombreCase)), lettre.get_width(), lettre.get_height())) #Afficher le texte
+            #positionFin=(largeurRoulette + (largeurRoulette-30)*(sin((i * (pi/nombreCase))*2)), largeurRoulette + (largeurRoulette-30)*(cos((i * (pi/nombreCase))*2))) #Calcul de la position du point (sur un cercle)
+            #positionFin=(largeurRoulette + (largeurRoulette-30)*(f(i*2/nombreCase)), largeurRoulette + (largeurRoulette-30)*(f((-i)*2/nombreCase+0.5))) #Calcul de la position du point (sur un cercle)
+            #print((f(i*2/nombreCase)), (f(((nombreCase-(i)))*2/nombreCase+1)), i*2/nombreCase, ((i)*2/nombreCase) + 1)
+            #draw.line(img, (50, 50, 50), (largeurRoulette, largeurRoulette), positionFin, largeurTraitsRoulette) #Dessiner la ligne
+            positionFin=((largeurRoulette-30)*cos(i/nombreCase*(pi*2)), (largeurRoulette-30)*sin(i/nombreCase*(pi*2))) #Calcul de la position de fin de la ligne grâce à la trigonométrie
+            draw.line(img, (50, 50, 50), (largeurRoulette, largeurRoulette), ((largeurRoulette) + positionFin[0], (largeurRoulette) + positionFin[1]), largeurTraitsRoulette) #Dessiner la ligne
+            texteLettre = i + ceil(nombreCase/4)
+            if int(texteLettre) > nombreCase:
+                texteLettre = str(int(texteLettre) - nombreCase)
+            lettre = police.render(str(texteLettre) + " "*(len(str(nombreCase+1))-len(str(i))), True, (0, 0, 0)) #Dessiner la lettre
+            lettre = transform.rotate(lettre, ((float(texteLettre) - 1)*(360)/(nombreCase-1))) #Tourner la lettre
+            positionFin=((largeurRoulette-35)*cos(i/nombreCase*(pi*2)), (largeurRoulette-35)*sin(i/nombreCase*(pi*2))) #Calcul de la position du texte grâce à la trigonométrie
+            #positionFinTrait=(lettre.get_width()*f(i*2/nombreCase), lettre.get_height()*f((-i)*2/nombreCase)) #Calcul de la position du texte par rapport au point (sur un cercle)
+            img.blit(lettre, ((largeurRoulette) + positionFin[0], (largeurRoulette) + positionFin[1], lettre.get_width(), lettre.get_height())) #Afficher le texte
         draw.circle(img, (0, 0, 0), (largeurRoulette, largeurRoulette), largeurRoulette - 100) #Dessiner la partie centrale de la roulette
         draw.circle(img, (218,165,32), (largeurRoulette, largeurRoulette), largeurRoulette - 102) #Dessine la partie centrale de la roulette
         draw.polygon(img, (30, 30, 30), ((largeurRoulette-20, largeurRoulette*2+10), (largeurRoulette+20, largeurRoulette*2+10), (largeurRoulette, largeurRoulette*2-40)))
