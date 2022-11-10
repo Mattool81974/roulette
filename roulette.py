@@ -85,6 +85,10 @@ tempsTraitEcritureVisibleInterfaceDEntreeCase = 0
 tempsLimiteTraitEcritureVisibleInterfaceDEntreeArgent = 0.4
 tempsLimiteTraitEcritureVisibleInterfaceDEntreeMise = 0.4
 tempsLimiteTraitEcritureVisibleInterfaceDEntreeCase = 0.4
+#Temps de rotation de la roulette (en secondes)
+tempsRotationRoulette=5
+#Temps de rotation de la roulette écoulé (en secondes)
+tempsRotationRouletteEcoule=0
 #Texte contenu dans les interfaces d'entrées
 texteInterfaceDEntreeArgent = ""
 texteInterfaceDEntreeMise = ""
@@ -93,6 +97,8 @@ texteInterfaceDEntreeCase = ""
 traitEcritureVisibleInterfaceDEntreeArgent = True
 traitEcritureVisibleInterfaceDEntreeMise = True
 traitEcritureVisibleInterfaceDEntreeCase = True
+#Vitesse de rotation de la roulette
+vitesseRotationRoulette=1
 #y du bouton valdier de la page 1
 yBoutonValiderPage1 = 525
 
@@ -134,6 +140,8 @@ while True:
                     focusInterfaceDEntreeCase = True #Remettre le focus sur l'interface d'entrée argent à vrai si clicker sur l'interface
                 if texteInterfaceDEntreeCase != "" and texteInterfaceDEntreeMise != "" and float(texteInterfaceDEntreeMise) > 0 and souris[0] >= 500/2 and souris[1] >= yBoutonLancerPage2 and souris[0] <= 500/2 + 200 and souris[1] <= yBoutonLancerPage2 + 94: #Lancer la roue
                     page = 2.3
+                    tempsRotationRouletteEcoule=0
+                    vitesseRotationRoulette=1
         elif ev.type == KEYDOWN: #Si une touche du clavier est préssé
             if page == 1:
                 if focusInterfaceDEntreeArgent: #Si le focus est sur l'entrée d'argent (tout les nombres)
@@ -318,6 +326,11 @@ while True:
             tempsTraitEcritureVisibleInterfaceDEntreeCase = 0 #Remettre le temps d'écriture du trait de l'interface à 0 pour prochain focus (uniquement esthétique)
             traitEcritureVisibleInterfaceDEntreeCase = True #Remettre la visibilité du trait de l'interface à vrai pour prochain focus (uniquement esthétique)
 
+        if page-2>=0.2 and page-2<=0.4:
+            tempsRotationRouletteEcoule+=deltaTimeConcret
+            if tempsRotationRouletteEcoule > tempsRotationRoulette:
+                page=2.06
+        
         largeurRoulette = 125 #Définir la largeur de la roulette
         img=Surface((largeurRoulette * 2, largeurRoulette * 2)).convert_alpha() #Créer une surface roulette compatible alpha
         img.fill((0, 0, 0, 0)) #Rendre le fond de la surface de la roulette transparent
@@ -325,26 +338,25 @@ while True:
         draw.circle(img, (50, 50, 50), (largeurRoulette, largeurRoulette), largeurRoulette - 25) #Dessine devant l'arrière de la roulette
         draw.circle(img, (139, 0, 0), (largeurRoulette, largeurRoulette), largeurRoulette - 30) #Dessiner le plateau de la roulette
         police = font.SysFont("arial", policeChiffreRoulette) #Mettre la police à la police de la roulette
+        offsetAngle=(tempsRotationRouletteEcoule)*(pi*2)/tempsRotationRoulette #Calculer la rotation de la roulette
+        offsetAngle*=vitesseRotationRoulette
         for i in range(nombreCase): #Dessiner chaque ligne et nombres
-            #positionFin=(largeurRoulette + (largeurRoulette-30)*(sin((i * (pi/nombreCase))*2)), largeurRoulette + (largeurRoulette-30)*(cos((i * (pi/nombreCase))*2))) #Calcul de la position du point (sur un cercle)
-            #positionFin=(largeurRoulette + (largeurRoulette-30)*(f(i*2/nombreCase)), largeurRoulette + (largeurRoulette-30)*(f((-i)*2/nombreCase+0.5))) #Calcul de la position du point (sur un cercle)
-            #print((f(i*2/nombreCase)), (f(((nombreCase-(i)))*2/nombreCase+1)), i*2/nombreCase, ((i)*2/nombreCase) + 1)
-            #draw.line(img, (50, 50, 50), (largeurRoulette, largeurRoulette), positionFin, largeurTraitsRoulette) #Dessiner la ligne
-            positionFin=((largeurRoulette-30)*cos(i/nombreCase*(pi*2)), (largeurRoulette-30)*sin(i/nombreCase*(pi*2))) #Calcul de la position de fin de la ligne grâce à la trigonométrie
+            positionFin=((largeurRoulette-30)*cos(i/nombreCase*(pi*2)+offsetAngle), (largeurRoulette-30)*sin(i/nombreCase*(pi*2)+offsetAngle)) #Calcul de la position de fin de la ligne grâce à la trigonométrie
             draw.line(img, (50, 50, 50), (largeurRoulette, largeurRoulette), ((largeurRoulette) + positionFin[0], (largeurRoulette) + positionFin[1]), largeurTraitsRoulette) #Dessiner la ligne
-            texteLettre = i + ceil(nombreCase/4)
-            if int(texteLettre) > nombreCase:
+            texteLettre = i + ceil(nombreCase/4) #Calcul du chiffre présent dans le texte, erreur présente à cause de l'utilisation de trigonométrie
+            if int(texteLettre) > nombreCase: #Calibrage du chiffre
                 texteLettre = str(int(texteLettre) - nombreCase)
             lettre = police.render(str(texteLettre) + " "*(len(str(nombreCase+1))-len(str(i))), True, (0, 0, 0)) #Dessiner la lettre
-            lettre = transform.rotate(lettre, ((float(texteLettre) - 1)*(360)/(nombreCase-1))) #Tourner la lettre
-            positionFin=((largeurRoulette-35)*cos(i/nombreCase*(pi*2)), (largeurRoulette-35)*sin(i/nombreCase*(pi*2))) #Calcul de la position du texte grâce à la trigonométrie
-            #positionFinTrait=(lettre.get_width()*f(i*2/nombreCase), lettre.get_height()*f((-i)*2/nombreCase)) #Calcul de la position du texte par rapport au point (sur un cercle)
-            img.blit(lettre, ((largeurRoulette) + positionFin[0], (largeurRoulette) + positionFin[1], lettre.get_width(), lettre.get_height())) #Afficher le texte
+            lettre = transform.rotate(lettre, -((float(texteLettre) - 1)*(360)/(nombreCase-1)+(offsetAngle*(180/pi)))) #Tourner la lettre
+            offsetLettre=policeChiffreRoulette/2 #Variable contenant la distance entre les points de fin des traits et le texte
+            positionFin=((largeurRoulette-(30+offsetLettre))*cos(i/nombreCase*(pi*2)+(pi/nombreCase)+offsetAngle), (largeurRoulette-(30+offsetLettre))*sin(i/nombreCase*(pi*2)+(pi/nombreCase)+offsetAngle)) #Calcul de la position du texte grâce à la trigonométrie
+            positionFinTrait=(lettre.get_width()*cos(i*2/nombreCase), lettre.get_height()*sin((-i)*2/nombreCase)) #Calcul de la position du texte par rapport au point (sur un cercle)
+            img.blit(lettre, ((largeurRoulette) + positionFin[0] - lettre.get_width()/2, (largeurRoulette) + positionFin[1] - lettre.get_height()/2, lettre.get_width(), lettre.get_height())) #Afficher le texte
         draw.circle(img, (0, 0, 0), (largeurRoulette, largeurRoulette), largeurRoulette - 100) #Dessiner la partie centrale de la roulette
         draw.circle(img, (218,165,32), (largeurRoulette, largeurRoulette), largeurRoulette - 102) #Dessine la partie centrale de la roulette
-        draw.polygon(img, (30, 30, 30), ((largeurRoulette-20, largeurRoulette*2+10), (largeurRoulette+20, largeurRoulette*2+10), (largeurRoulette, largeurRoulette*2-40)))
+        draw.polygon(img, (30, 30, 30), ((largeurRoulette-20, largeurRoulette*2+10), (largeurRoulette+20, largeurRoulette*2+10), (largeurRoulette, largeurRoulette*2-40))) #Dessine un triangle en bas de la roulette
 
-        if page - 2.0 < 0.2:
+        if page - 2.0 < 0.2: #Si la page actuel est la page de demande de la mise et de la case
             yBoutonLancerPage2=500
             if souris[0] >= 500/2 and souris[1] >= yBoutonLancerPage2 and souris[0] <= 500/2 + 200 and souris[1] <= yBoutonLancerPage2 + 94:
                 fenetre.blit(elementsGUI["boutonLancer2"], (500/2, yBoutonLancerPage2, 200, 94))
