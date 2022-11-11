@@ -11,20 +11,20 @@ pygame.init() #Lancer pygame
 def strEnArray(s):
     return [c for c in s]
 #Une fonction mathématique qui a comme représentation graphique un demi cercle parfait
-def f(x):
+def f(x, y = 1, z = 1):
     multipliant = 1 #Variable permettant d'opposer la valeur finale
     while True: #Transformer la variable pour correspondre à l'intervalle de définition de la fonction
-        if x < -1:
+        if x < -y:
             x *= -1
             multipliant *= -1
-            x -= 2
-        elif x > 1:
+            x -= y
+        elif x > y:
             x *= -1
             multipliant *= -1
-            x += 2
+            x += y
         else:
             break
-    return sqrt(1-x**2) #Retourner l'image de la fonction
+    return sqrt(y**2-z*(x**2)) #Retourner l'image de la fonction
 
 #Variable constante de type tuple contenant la taille de l'écran
 TAILLE=(700, 600)
@@ -339,7 +339,9 @@ while True:
         draw.circle(img, (139, 0, 0), (largeurRoulette, largeurRoulette), largeurRoulette - 30) #Dessiner le plateau de la roulette
         police = font.SysFont("arial", policeChiffreRoulette) #Mettre la police à la police de la roulette
         offsetAngle=(tempsRotationRouletteEcoule)*(pi*2)/tempsRotationRoulette #Calculer la rotation de la roulette
-        offsetAngle*=vitesseRotationRoulette
+        offsetAngle*=(vitesseRotationRoulette*f((tempsRotationRouletteEcoule-tempsRotationRoulette/2)*2/tempsRotationRoulette, 0.5, 0.5)*10)
+        if page-2>=0.2 and page-2<=0.4:
+            print(offsetAngle, f((tempsRotationRouletteEcoule-tempsRotationRoulette/2)*2/tempsRotationRoulette, 0.5, 0.5))
         for i in range(nombreCase): #Dessiner chaque ligne et nombres
             positionFin=((largeurRoulette-30)*cos(i/nombreCase*(pi*2)+offsetAngle), (largeurRoulette-30)*sin(i/nombreCase*(pi*2)+offsetAngle)) #Calcul de la position de fin de la ligne grâce à la trigonométrie
             draw.line(img, (50, 50, 50), (largeurRoulette, largeurRoulette), ((largeurRoulette) + positionFin[0], (largeurRoulette) + positionFin[1]), largeurTraitsRoulette) #Dessiner la ligne
