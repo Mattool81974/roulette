@@ -2,7 +2,8 @@ from random import *
 
 #Variable global
 argent = 15000
-nombreCase = 37
+nombreCase = 13
+hasard=0
 
 #Demander l'argent total à l'utilisateur
 def demanderArgent():
@@ -37,6 +38,7 @@ def printArgent(): print("Il vous reste: " + str(argent) + " euros")
 #Lancer la roulette
 def roulette():
     global argent #Pouvoir utiliser argent dans la fonction
+    global hasard #Pouvoir utiliser hasard dans la fonction
     numero=demanderNumero() #Demander un numero et la mise à l'utilisateur
     mise=demanderMise()
     hasard=randint(0, 36) #Tirer un numéro aléatoire
