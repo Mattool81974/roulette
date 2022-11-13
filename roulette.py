@@ -35,6 +35,8 @@ TAILLE=(700, 600)
 #1.0 -> page où rentrer ses sous
 #2.0 -> page où le jouer choisis son numéro et ou la roulette n'est pas encore lancé
 #2.3 -> page où le jouer choisis son numéro et ou la roulette est lancé
+#2.6 -> page où les résultats sont données au joueur et ou l'argent est actualisé
+#2.65 -> page juste après la 2.6 pour éviter que l'argent se fasse actualier à l'infini
 page=0
 
 #Création de la fenêtre dans une instance "screen"
@@ -63,7 +65,13 @@ elementsGUI = {
     "boutonValider1": image.load("assets/boutons/boutonValider1.png"),
     "boutonValider2": image.load("assets/boutons/boutonValider2.png"),
     "boutonLancer1": image.load("assets/boutons/boutonLancer1.png"),
-    "boutonLancer2": image.load("assets/boutons/boutonLancer2.png")
+    "boutonLancer2": image.load("assets/boutons/boutonLancer2.png"),
+    "boutonRejouer1": image.load("assets/boutons/boutonRejouer1.png"),
+    "boutonRejouer2": image.load("assets/boutons/boutonRejouer2.png"),
+    "boutonArreter1": image.load("assets/boutons/boutonArreter1.png"),
+    "boutonArreter2": image.load("assets/boutons/boutonArreter2.png"),
+    "boutonQuitter1": image.load("assets/boutons/boutonQuitter1.png"),
+    "boutonQuitter2": image.load("assets/boutons/boutonQuitter2.png")
 }
 #Savoir si il y a un focus sur les interfaces d'entrées
 focusInterfaceDEntreeArgent = False
@@ -138,6 +146,7 @@ while True:
                     focusInterfaceDEntreeArgent = True #Remettre le focus sur l'interface d'entrée argent à vrai si clicker sur l'interface
                 elif texteInterfaceDEntreeArgent != "" and float(texteInterfaceDEntreeArgent) > 0 and souris[0] >= 550/2 and souris[1] >= yBoutonValiderPage1 and souris[0] <= 550/2 + 150 and souris[1] <= yBoutonValiderPage1 + 71: #Valider la quantité d'argent totale
                     argent = float(texteInterfaceDEntreeArgent)
+                    argentDebut = float(texteInterfaceDEntreeArgent)
                     page = 2
             elif page == 2:
                 if souris[0] >= rectInterfaceDEntreeMise[0] and souris[0] <= rectInterfaceDEntreeMise[0] + rectInterfaceDEntreeMise[2] and souris[1] >= rectInterfaceDEntreeMise[1] and souris[1] <= rectInterfaceDEntreeMise[1] + rectInterfaceDEntreeMise[3]:
@@ -146,15 +155,33 @@ while True:
                     focusInterfaceDEntreeCase = True #Remettre le focus sur l'interface d'entrée argent à vrai si clicker sur l'interface
                 if texteInterfaceDEntreeCase != "" and texteInterfaceDEntreeMise != "" and float(texteInterfaceDEntreeMise) > 0 and souris[0] >= 500/2 and souris[1] >= yBoutonLancerPage2 and souris[0] <= 500/2 + 200 and souris[1] <= yBoutonLancerPage2 + 94: #Lancer la roue
                     page = 2.3
-                    tempsRotationRouletteEcoule=0
+                    argent-=float(texteInterfaceDEntreeMise)
+                    angleRotationRoulette=0
+                    angleRoulette=0
                     vitesseRotationRoulette=1
                     hasard=randint(1, nombreCase)
                     angleRotationRouletteLimiteVrai=angleRotationRouletteLimite+((360/nombreCase)*(pi/180)*(7-hasard))
+            elif page - 2.0 > 0.5 and page - 2 < 0.7:
+                if argent > 0:
+                    if souris[0] >= xMilieu+10 and souris[1] >= 533 and souris[0] <= xMilieu+110 and souris[1] <= 580:
+                        page=3
+                    if souris[0] >= xMilieu-110 and souris[1] >= 533 and souris[0] <= xMilieu-10 and souris[1] <= 580:
+                        page=2
+                        texteInterfaceDEntreeMise=""
+                        texteInterfaceDEntreeCase=""
+                else:
+                    if souris[0] >= xMilieu-50 and souris[1] >= 533 and souris[0] <= xMilieu+50 and souris[1] <= 580:
+                        page=3
+            elif page == 3:
+                if souris[0] >= 200 and souris[0] <= 500 and souris[1] >= 450 and souris[1] <= 692:
+                    exit()
+
         elif ev.type == KEYDOWN: #Si une touche du clavier est préssé
             if page == 1:
                 if focusInterfaceDEntreeArgent: #Si le focus est sur l'entrée d'argent (tout les nombres)
                     if ev.key == K_KP_ENTER or ev.key == 13 and texteInterfaceDEntreeArgent != "" and float(texteInterfaceDEntreeArgent) > 0: #Valider la quantité d'argent totale
                         argent = float(texteInterfaceDEntreeArgent)
+                        argentDebut = float(texteInterfaceDEntreeArgent)
                         page = 2
                     elif ev.key == K_BACKSPACE and len(texteInterfaceDEntreeArgent) > 0: #Supprimer un caractère
                         temp = strEnArray(texteInterfaceDEntreeArgent)
@@ -210,7 +237,7 @@ while True:
                             texteInterfaceDEntreeMise += "8"
                         elif ev.key == K_9 or ev.key == K_KP_9 or ev.key == K_KP9:
                             texteInterfaceDEntreeMise += "9" 
-                        elif (ev.key == K_PERIOD or ev.key == K_KP_PERIOD or ev.key == K_COMMA) and texteInterfaceDEntreeMise.count(".") <= 0:
+                        elif (ev.key == K_PERIOD or ev.key == K_KP_PERIOD or ev.key == K_COMMA) and texteInterfaceDEntreeMise.count(".") <= 0 and len(texteInterfaceDEntreeMise) > 0:
                             texteInterfaceDEntreeMise += "." 
                     if texteInterfaceDEntreeMise != "" and float(texteInterfaceDEntreeMise) > float(texteInterfaceDEntreeArgent):
                         texteInterfaceDEntreeMise = str(float(texteInterfaceDEntreeArgent))
@@ -293,7 +320,7 @@ while True:
             traitEcritureVisibleInterfaceDEntreeArgent = True #Remettre la visibilité du trait de l'interface à vrai pour prochain focus (uniquement esthétique)
     elif floor(page) == 2:
         police = font.SysFont("arial", 30) #Mettre la police à 30
-        titreArgent = police.render("Vous avez " + str(argent) + " euros.", True, (0, 0, 0)) #Créer une image avec le texte indiquant la quantité d'argent dedans
+        titreArgent = police.render("Vous avez " + str(round(argent, 2)) + " euros.", True, (0, 0, 0)) #Créer une image avec le texte indiquant la quantité d'argent dedans
         fenetre.blit(titreArgent, (700/2.0-titreArgent.get_width()/2.0, 300, titreArgent.get_width(), titreArgent.get_height())) #Afficher l'image dans la fenêtre
         
         titreMise = police.render("Mise:", True, (0, 0, 0)) #Créer une image avec le titre de la mise dedans
@@ -382,6 +409,90 @@ while True:
                 curseur = SYSTEM_CURSOR_HAND #Changer le curseur
             else:
                 fenetre.blit(elementsGUI["boutonLancer1"], (500/2, yBoutonLancerPage2, 200, 94))
+        
+        if page - 2.0 > 0.5 and page - 2 < 0.7: #Si la roulette a été lancé
+            police = font.SysFont("arial", 24) #Mettre la police à la police du texte
+            texte1=police.render("Le nombre tiré est " + str(hasard) + ".", True, (0, 0, 0)) #Création du texte d'affichage du nombre au hasard
+            texte2=police.render("Vous avez choisis le nombre " + texteInterfaceDEntreeCase + ".", True, (0, 0, 0)) #Création du texte d'affichage du nombre au hasard
+            if hasard == int(texteInterfaceDEntreeCase):
+                texte3=police.render("Les 2 nombres sont similaires.", True, (0, 0, 0)) #Création du texte disant que les 2 nombres sont égaux
+                texte4=police.render("La mise est triplé. Elle est de " + str(round(float(texteInterfaceDEntreeMise)*3, 2)) + " euros.", True, (0, 0, 0)) #Création du texte disant le triplage de la mise
+                if page - 2.0 > 0.5 and page - 2 < 0.61: #Si l'actualisation n'a pas eu lieu
+                    argent+=float(texteInterfaceDEntreeMise)*3 #Actualiser l'argent
+            elif hasard%2 == int(texteInterfaceDEntreeCase)%2:
+                if hasard%2 == 1: pairOuImpair="impair" #Savoir si les 2 nombres sont soit pairs soit impairs
+                else: pairOuImpair="pair"
+                texte3=police.render("Les 2 nombres sont " + pairOuImpair + ".", True, (0, 0, 0)) #Création du texte disant que les 2 nombres sont soit pairs soit impairs
+                texte4=police.render("La mise est augmenté de sa demi. Elle est de " + str(round(float(texteInterfaceDEntreeMise)*1.5, 2)) + " euros.", True, (0, 0, 0)) #Création du texte disant la multiplication par 1.5 de la mise
+                if page - 2.0 > 0.5 and page - 2 < 0.61: #Si l'actualisation n'a pas eu lieu
+                    argent+=float(texteInterfaceDEntreeMise)*1.5 #Actualiser l'argent
+            else:
+                if hasard%2 == 1: pairOuImpair="pair" #Savoir si le nombre tiré sont soit pairs soit impairs
+                else: pairOuImpair="impair"
+                texte3=police.render("Le nombre tiré est " + pairOuImpair + " et pas celui choisi", True, (0, 0, 0)) #Création du texte disant que les 2 nombres ne sont pas tout les 2 pairs ou impairs
+                texte4=police.render("La mise est perdue. Elle est de 0 euros.", True, (0, 0, 0)) #Création du texte disant l'annulation de la mise
+            
+            if argent > 0:
+                texte5=police.render("Il vous reste " + str(argent) + " euros.", True, (0, 0, 0)) #Création du texte disant la quantité d'argent disponible
+            else:
+                texte5=police.render("Il vous reste 0 euro. Vous êtes ruiné", True, (0, 0, 0)) #Création du texte disant la quantité d'argent disponible et que le joueur est ruiné
+            xDroiteInterface=rectInterfaceDEntreeMise[0]+rectInterfaceDEntreeMise[2] #Obtention des coordonnées de la droite de l'interface de la mise pour alignage (purement estéthique)
+            xMilieu=xDroiteInterface+((700-xDroiteInterface)/2) #Milieu de l'endroit ou les résultats sont affichés
+            fenetre.blit(texte1, ((xMilieu-texte1.get_width()/2), 533-(texte1.get_height()+texte2.get_height()+texte3.get_height()+texte4.get_height()+texte5.get_height()), texte1.get_width(), texte1.get_height())) #Placer le texte 1
+            fenetre.blit(texte2, ((xMilieu-texte2.get_width()/2), 533-(texte2.get_height()+texte3.get_height()+texte4.get_height()+texte5.get_height()), texte2.get_width(), texte2.get_height())) #Placer le texte 2
+            fenetre.blit(texte3, ((xMilieu-texte3.get_width()/2), 533-(texte3.get_height()+texte4.get_height()+texte5.get_height()), texte3.get_width(), texte3.get_height())) #Placer le texte 3
+            fenetre.blit(texte4, ((xMilieu-texte4.get_width()/2), 533-(texte4.get_height()+texte5.get_height()), texte4.get_width(), texte4.get_height())) #Placer le texte 4
+            fenetre.blit(texte5, ((xMilieu-texte5.get_width()/2), 533-(texte5.get_height()), texte5.get_width(), texte5.get_height())) #Placer le texte 5
+
+            if argent > 0:
+                if souris[0] >= xMilieu+10 and souris[1] >= 533 and souris[0] <= xMilieu+110 and souris[1] <= 580:
+                    fenetre.blit(elementsGUI["boutonArreter2"], (xMilieu+10, 533, 100, 47))
+                    curseur = SYSTEM_CURSOR_HAND #Changer le curseur
+                else:
+                    fenetre.blit(elementsGUI["boutonArreter1"], (xMilieu+10, 533, 100, 47))
+            
+                if souris[0] >= xMilieu-110 and souris[1] >= 533 and souris[0] <= xMilieu-10 and souris[1] <= 580:
+                    fenetre.blit(elementsGUI["boutonRejouer2"], (xMilieu-110, 533, 100, 47))
+                    curseur = SYSTEM_CURSOR_HAND #Changer le curseur
+                else:
+                    fenetre.blit(elementsGUI["boutonRejouer1"], (xMilieu-110, 533, 100, 47))
+            else:
+                if souris[0] >= xMilieu-50 and souris[1] >= 533 and souris[0] <= xMilieu+50 and souris[1] <= 580:
+                    fenetre.blit(elementsGUI["boutonArreter2"], (xMilieu-50, 533, 100, 47))
+                    curseur = SYSTEM_CURSOR_HAND #Changer le curseur
+                else:
+                    fenetre.blit(elementsGUI["boutonArreter1"], (xMilieu-50, 533, 100, 47))
+
+            page=2.65 #Actualiser la page pour dire que l'actualisation de l'argent a eu lieu
+    elif floor(page) == 3:
+        police = font.SysFont("arial", 30) #Mettre la police à 30
+        titreArgent = police.render("Vous repartez avec " + str(round(argent, 2)) + " euros.", True, (0, 0, 0)) #Créer une image avec le texte indiquant la quantité d'argent dedans (similaire à celui de la page 2)
+        fenetre.blit(titreArgent, (700/2.0-titreArgent.get_width()/2.0, 300, titreArgent.get_width(), titreArgent.get_height())) #Afficher l'image dans la fenêtre
+        if argentDebut > argent:
+            titreResultat = police.render("Vous avez perdue " + str(round(argentDebut - argent, 2)) + " euros.", True, (0, 0, 0)) #Créer une image avec le texte indiquant le résultat du joueur
+            fenetre.blit(titreResultat, (700/2.0-titreResultat.get_width()/2.0, 300 + titreArgent.get_height()+10, titreResultat.get_width(), titreResultat.get_height())) #Afficher l'image dans la fenêtre
+            titreCommentaire = police.render("Pas terrible...", True, (0, 0, 0)) #Créer une image avec le texte pour ce moquer du joueur (° ͜ʖ°)
+            fenetre.blit(titreCommentaire, (700/2.0-titreCommentaire.get_width()/2.0, 300 + titreArgent.get_height()+titreResultat.get_height()+20, titreCommentaire.get_width(), titreCommentaire.get_height())) #Afficher l'image dans la fenêtre
+        elif argentDebut == argent:
+            titreResultat = police.render("Vous avez " + str(round(argentDebut - argent, 2)) + " euros, comme au début.", True, (0, 0, 0)) #Créer une image avec le texte indiquant le résultat du joueur
+            fenetre.blit(titreResultat, (700/2.0-titreResultat.get_width()/2.0, 300 + titreArgent.get_height()+10, titreResultat.get_width(), titreResultat.get_height())) #Afficher l'image dans la fenêtre
+            titreCommentaire = police.render("Pourquoi pas...", True, (0, 0, 0)) #Créer une image avec le texte pour ce moquer du joueur (° ͜ʖ°)
+            fenetre.blit(titreCommentaire, (700/2.0-titreCommentaire.get_width()/2.0, 300 + titreArgent.get_height()+titreResultat.get_height()+20, titreCommentaire.get_width(), titreCommentaire.get_height())) #Afficher l'image dans la fenêtre
+        else:
+            titreResultat = police.render("Vous avez gagné " + str(round(argent - argentDebut, 2)) + " euros.", True, (0, 0, 0)) #Créer une image avec le texte indiquant le résultat du joueur
+            fenetre.blit(titreResultat, (700/2.0-titreResultat.get_width()/2.0, 300 + titreArgent.get_height()+10, titreResultat.get_width(), titreResultat.get_height())) #Afficher l'image dans la fenêtre
+            titreCommentaire = police.render("Futur millionaire (non) ?", True, (0, 0, 0)) #Créer une image avec le texte pour ce moquer du joueur (° ͜ʖ°)
+            fenetre.blit(titreCommentaire, (700/2.0-titreCommentaire.get_width()/2.0, 300 + titreArgent.get_height()+titreResultat.get_height()+20, titreCommentaire.get_width(), titreCommentaire.get_height())) #Afficher l'image dans la fenêtre
+        
+        if souris[0] >= 200 and souris[0] <= 500 and souris[1] >= 450 and souris[1] <= 692: #Savoir si le curseur survole le bouton "quitter" ou non
+            fenetre.blit(elementsGUI["boutonQuitter2"], (200, 450, 300, 142)) #Mettre un bouton focus
+            curseur = SYSTEM_CURSOR_HAND #Changer le curseur
+        else:
+            fenetre.blit(elementsGUI["boutonQuitter1"], (200, 450, 300, 142)) #Mettre un bouton non-focus
+
+        police = font.SysFont("arial", 22) #Mettre la police à 18
+        texte=police.render("Merci d'avoir joué !", True, (0, 0, 0)) #Remercier le joueur d'avoir jouer
+        fenetre.blit(texte, (10, 590-(texte.get_height()+10), texte.get_width(), texte.get_height()))
 
     #Actualiser le curseur
     mouse.set_cursor(curseur)

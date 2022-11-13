@@ -2,6 +2,7 @@ from random import *
 
 #Variable global
 argent = 15000
+argentDebut = 15000
 nombreCase = 13
 hasard=0
 
