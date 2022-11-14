@@ -160,7 +160,7 @@ while True:
                     angleRoulette=0
                     vitesseRotationRoulette=1
                     hasard=randint(1, nombreCase)
-                    angleRotationRouletteLimiteVrai=angleRotationRouletteLimite+((360/nombreCase)*(pi/180)*(7-hasard))
+                    angleRotationRouletteLimiteVrai=angleRotationRouletteLimite+((360/nombreCase)*(pi/180)*(ceil(nombreCase/2)-hasard))
             elif page - 2.0 > 0.5 and page - 2 < 0.7:
                 if argent > 0:
                     if souris[0] >= xMilieu+10 and souris[1] >= 533 and souris[0] <= xMilieu+110 and souris[1] <= 580:
@@ -368,7 +368,6 @@ while True:
             draw.circle(img, (0, 0, 0), (largeurRoulette, largeurRoulette), largeurRoulette) #Dessiner l'arrière de la roulette
             draw.circle(img, (50, 50, 50), (largeurRoulette, largeurRoulette), largeurRoulette - 25) #Dessine devant l'arrière de la roulette
             draw.circle(img, (139, 0, 0), (largeurRoulette, largeurRoulette), largeurRoulette - 30) #Dessiner le plateau de la roulette
-            policeChiffreRoulette=24
             police = font.SysFont("arial", policeChiffreRoulette) #Mettre la police à la police de la roulette
         
             if page-2>=0.2 and page-2<=0.4: #Si la roulette est lancé
@@ -427,7 +426,7 @@ while True:
                 if page - 2.0 > 0.5 and page - 2 < 0.61: #Si l'actualisation n'a pas eu lieu
                     argent+=float(texteInterfaceDEntreeMise)*1.5 #Actualiser l'argent
             else:
-                if hasard%2 == 1: pairOuImpair="pair" #Savoir si le nombre tiré sont soit pairs soit impairs
+                if hasard%2 == 0: pairOuImpair="pair" #Savoir si le nombre tiré sont soit pairs soit impairs
                 else: pairOuImpair="impair"
                 texte3=police.render("Le nombre tiré est " + pairOuImpair + " et pas celui choisi", True, (0, 0, 0)) #Création du texte disant que les 2 nombres ne sont pas tout les 2 pairs ou impairs
                 texte4=police.render("La mise est perdue. Elle est de 0 euros.", True, (0, 0, 0)) #Création du texte disant l'annulation de la mise
