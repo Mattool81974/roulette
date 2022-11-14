@@ -156,11 +156,11 @@ while True:
                 if texteInterfaceDEntreeCase != "" and texteInterfaceDEntreeMise != "" and float(texteInterfaceDEntreeMise) > 0 and souris[0] >= 500/2 and souris[1] >= yBoutonLancerPage2 and souris[0] <= 500/2 + 200 and souris[1] <= yBoutonLancerPage2 + 94: #Lancer la roue
                     page = 2.3
                     argent-=float(texteInterfaceDEntreeMise)
-                    angleRotationRoulette=0
+                    angleRotationRoulette=0 #Réinitialisation des données de la roulette
                     angleRoulette=0
                     vitesseRotationRoulette=1
                     hasard=randint(1, nombreCase)
-                    angleRotationRouletteLimiteVrai=angleRotationRouletteLimite+((360/nombreCase)*(pi/180)*(ceil(nombreCase/2)-hasard))
+                    angleRotationRouletteLimiteVrai=angleRotationRouletteLimite+((360/nombreCase)*(pi/180)*(ceil(nombreCase/2)-hasard)) #Calcul de l'angle de rotation réel
             elif page - 2.0 > 0.5 and page - 2 < 0.7:
                 if argent > 0:
                     if souris[0] >= xMilieu+10 and souris[1] >= 533 and souris[0] <= xMilieu+110 and souris[1] <= 580:
@@ -277,6 +277,9 @@ while True:
 
     fenetre.blit(arrierePlan, (0, 0, TAILLE[0], TAILLE[1])) #Afficher l'image d'arrière plan (visible sur toutes las pages)
     fenetre.blit(elementsGUI["titrePage0"], (50, 0, 600, 300)) #Affichage du titre (visible sur toutes les pages)
+    police = font.SysFont("arial", 20) #Augmenter la police à taille 30
+    texte=police.render("Par Mattéo Menou, 1er 05, dédicace au grand Léo.", True, (0, 0, 0))
+    fenetre.blit(texte, ( 695-texte.get_width(), 5, texte.get_width(), texte.get_height()))
     #Afficher des choses différentes selon la page
     if page == 0 :
         if souris[0] >= 200 and souris[0] <= 500 and souris[1] >= 400 and souris[1] <= 642: #Savoir si le curseur survole le bouton "jouer" ou non
@@ -387,7 +390,7 @@ while True:
             for i in range(nombreCase): #Dessiner chaque ligne et nombres
                 positionFin=((largeurRoulette-30)*cos(i/nombreCase*(pi*2)+angleRoulette), (largeurRoulette-30)*sin(i/nombreCase*(pi*2)+angleRoulette)) #Calcul de la position de fin de la ligne grâce à la trigonométrie
                 draw.line(img, (50, 50, 50), (largeurRoulette, largeurRoulette), ((largeurRoulette) + positionFin[0], (largeurRoulette) + positionFin[1]), largeurTraitsRoulette) #Dessiner la ligne
-                texteLettre = i + ceil(nombreCase/4) #Calcul du chiffre présent dans le texte, erreur présente à cause de l'utilisation de trigonométrie
+                texteLettre = i + ceil(nombreCase/4) #Calcul du chiffre présent dans le texte
                 if int(texteLettre) > nombreCase: #Calibrage du chiffre
                     texteLettre = str(int(texteLettre) - nombreCase)
                 lettre = police.render(str(texteLettre) + " "*(len(str(nombreCase+1))-len(str(i))), True, (0, 0, 0)) #Dessiner la lettre
@@ -432,7 +435,7 @@ while True:
                 texte4=police.render("La mise est perdue. Elle est de 0 euros.", True, (0, 0, 0)) #Création du texte disant l'annulation de la mise
             
             if argent > 0:
-                texte5=police.render("Il vous reste " + str(argent) + " euros.", True, (0, 0, 0)) #Création du texte disant la quantité d'argent disponible
+                texte5=police.render("Il vous reste " + str(round(argent, 2)) + " euros.", True, (0, 0, 0)) #Création du texte disant la quantité d'argent disponible
             else:
                 texte5=police.render("Il vous reste 0 euro. Vous êtes ruiné", True, (0, 0, 0)) #Création du texte disant la quantité d'argent disponible et que le joueur est ruiné
             xDroiteInterface=rectInterfaceDEntreeMise[0]+rectInterfaceDEntreeMise[2] #Obtention des coordonnées de la droite de l'interface de la mise pour alignage (purement estéthique)
