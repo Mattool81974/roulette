@@ -37,6 +37,7 @@ TAILLE=(700, 600)
 #2.3 -> page où le jouer choisis son numéro et ou la roulette est lancé
 #2.6 -> page où les résultats sont données au joueur et ou l'argent est actualisé
 #2.65 -> page juste après la 2.6 pour éviter que l'argent se fasse actualier à l'infini
+#3.0 -> page d'au revoir
 page=0
 
 #Création de la fenêtre dans une instance "screen"
@@ -80,9 +81,9 @@ focusInterfaceDEntreeMise = False
 #Largeur des traits de la roulette
 largeurTraitsRoulette=1
 #Statue de rotation pour l'animation du bouton chargement
-parametreRotation = 0
+parametreRotationChargement = 0
 #Vitesse de rotation pour l'animation du bouton chargement
-PARAMETRE_ROTATION_VITESSE = 0.5
+PARAMETREROTATIONCHARGEMENTVITESSE = 0.5
 #Police des chiffres sur la roulette
 policeChiffreRoulette=8
 #Définir le rect des interfaces d'entrées
@@ -208,6 +209,8 @@ while True:
                             texteInterfaceDEntreeArgent += "8"
                         elif ev.key == K_9 or ev.key == K_KP_9 or ev.key == K_KP9:
                             texteInterfaceDEntreeArgent += "9"
+                        elif (ev.key == K_PERIOD or ev.key == K_KP_PERIOD or ev.key == K_COMMA) and texteInterfaceDEntreeArgent.count(".") <= 0 and len(texteInterfaceDEntreeArgent) > 0:
+                            texteInterfaceDEntreeArgent += "." 
             elif page == 2:
                 if focusInterfaceDEntreeMise: #Si le focus est sur l'entrée mise (tout les nombres)
                     if ev.key == K_KP_ENTER or ev.key == 13 and texteInterfaceDEntreeArgent != "": #Valider la quantité d'argent totale
@@ -288,10 +291,10 @@ while True:
         else:
             fenetre.blit(elementsGUI["boutonJouer1"], (200, 400, 300, 142)) #Mettre un bouton non-focus
         boutonParametre = elementsGUI["boutonParametre"]
-        boutonParametre = transform.rotate(boutonParametre, parametreRotation)
+        boutonParametre = transform.rotate(boutonParametre, parametreRotationChargement)
         if souris[0] >= 10 and souris[0] <= 76 and souris[1] >= 10 and souris[1] <= 76: #Savoir si le curseur survole le bouton "paramètre" ou non
-            boutonParametre = transform.rotate(boutonParametre, 360*deltaTimeConcret*PARAMETRE_ROTATION_VITESSE) #Tourner le bouton (animation)
-            parametreRotation += 360*deltaTimeConcret*PARAMETRE_ROTATION_VITESSE #Enregistrer la rotation du bouton
+            boutonParametre = transform.rotate(boutonParametre, 360*deltaTimeConcret*PARAMETREROTATIONCHARGEMENTVITESSE) #Tourner le bouton (animation)
+            parametreRotationChargement += 360*deltaTimeConcret*PARAMETREROTATIONCHARGEMENTVITESSE #Enregistrer la rotation du bouton
             curseur = SYSTEM_CURSOR_HAND #Changer le curseur
         fenetre.blit(boutonParametre, (10+(66-boutonParametre.get_size()[0])/2, 10+(66-boutonParametre.get_size()[1])/2, boutonParametre.get_size()[0], boutonParametre.get_size()[1])) #Afficher le bouton parametre
     elif page == 1:
