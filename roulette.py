@@ -242,8 +242,8 @@ while True:
                             texteInterfaceDEntreeMise += "9" 
                         elif (ev.key == K_PERIOD or ev.key == K_KP_PERIOD or ev.key == K_COMMA) and texteInterfaceDEntreeMise.count(".") <= 0 and len(texteInterfaceDEntreeMise) > 0:
                             texteInterfaceDEntreeMise += "." 
-                    if texteInterfaceDEntreeMise != "" and float(texteInterfaceDEntreeMise) > float(texteInterfaceDEntreeArgent):
-                        texteInterfaceDEntreeMise = str(float(texteInterfaceDEntreeArgent))
+                    if texteInterfaceDEntreeMise != "" and float(texteInterfaceDEntreeMise) > argent:
+                        texteInterfaceDEntreeMise = str(round(argent, 2))
                 elif focusInterfaceDEntreeCase: #Si le focus est sur l'entrée mise (tout les nombres)
                     if ev.key == K_KP_ENTER or ev.key == 13 and texteInterfaceDEntreeCase != "": #Valider la quantité d'argent totale
                         focusInterfaceDEntreeCase = False
